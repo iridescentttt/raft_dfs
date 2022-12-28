@@ -1,0 +1,28 @@
+[package]
+name = "dfs"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]] # Bin to run the gRPC namenode
+name = "namenode"
+path = "src/namenode_server.rs"
+
+[[bin]] # Bin to run the gRPC datanode
+name = "datanode"
+path = "src/datanode_server.rs"
+
+[[bin]] # Bin to run the gRPC client
+name = "client"
+path = "src/client.rs"
+
+[dependencies]
+tonic = "0.8"
+prost = "0.11"
+chrono = "0.4.23"
+rand = "*"
+futures = "*"
+fs2 = "*"
+tokio = { version = "1.0.0", features = ["macros", "rt-multi-thread"] }
+
+[build-dependencies]
+tonic-build = "0.8"

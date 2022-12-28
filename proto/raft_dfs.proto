@@ -1,0 +1,129 @@
+syntax = "proto3";
+package raft_dfs;
+
+service NameNodeService {
+  rpc Read(NameNodeReadReq) returns (NameNodeReadRes);
+  rpc Write(NameNodeWriteReq) returns (NameNodeWriteRes);
+  rpc Delete(NameNodeDeleteReq) returns (NameNodeDeleteRes);
+  rpc Register(RegisterReq) returns (RegisterRes);
+  rpc UpdateLeader(UpdateLeaderReq) returns (UpdateLeaderRes);
+  rpc UpdateAddr(NameNodeUpdateAddrReq) returns (NameNodeUpdateAddrRes);
+}
+
+message NameNodeReadReq { string filename = 1; }
+
+message NameNodeReadRes {
+  string id = 1;
+  string addr = 2;
+}
+
+message NameNodeWriteReq {
+  string filename = 1;
+  string content = 2;
+}
+
+message NameNodeWriteRes {
+  string id = 1;
+  string addr = 2;
+}
+
+message NameNodeDeleteReq { string filename = 1; }
+
+message NameNodeDeleteRes {
+  string id = 1;
+  string addr = 2;
+}
+
+message RegisterReq {
+  string id = 1;
+  string addr = 2;
+}
+
+message DataNodeConfig {
+  string id = 1;
+  string addr = 2;
+}
+
+message RegisterRes {
+  string leader_id = 1;
+  string leader_addr = 2;
+  repeated DataNodeConfig nodes = 3;
+}
+
+message UpdateLeaderReq {
+  string id = 1;
+  int32 term = 2;
+}
+
+message UpdateLeaderRes { bool success = 1; }
+
+message NameNodeUpdateAddrReq {
+  string message = 1;
+  repeated DataNodeConfig nodes = 2;
+}
+
+message NameNodeUpdateAddrRes { bool success = 1; }
+
+service DataNodeService {
+  rpc Read(DataNodeReadReq) returns (DataNodeReadRes);
+  rpc Write(DataNodeWriteReq) returns (DataNodeWriteRes);
+  rpc Delete(DataNodeDeleteReq) returns (DataNodeDeleteRes);
+
+  // leader append log message && heartbeat message
+  rpc AppendEntries(AppendEntriesReq) returns (AppendEntriesRes);
+
+  rpc RequestVote(RequestVoteReq) returns (RequestVoteRes);
+
+  rpc UpdateLog(UpdateLogReq) returns (UpdateLogRes);
+
+  rpc UpdateAddr(DataNodeUpdateAddrReq) returns (DataNodeUpdateAddrRes);
+}
+
+message DataNodeReadReq { string filename = 1; }
+
+message DataNodeReadRes { string content = 1; }
+
+message DataNodeWriteReq {
+  string filename = 1;
+  string content = 2;
+}
+
+message DataNodeWriteRes { string message = 1; }
+
+message DataNodeDeleteReq { string filename = 1; }
+
+message DataNodeDeleteRes { string message = 1; }
+
+message AppendEntriesReq {
+  int32 term = 1;
+  string id = 2;
+  repeated string entries = 3;
+  int32 index = 4;
+}
+
+message AppendEntriesRes { bool success = 1; }
+
+message RequestVoteReq {
+  int32 term = 1;
+  string candidate_id = 2;
+}
+
+message RequestVoteRes {
+  int32 term = 1;
+  bool voteGranted = 2;
+}
+
+message UpdateLogReq {
+  int32 term = 1;
+  string id = 2;
+  repeated string logs = 3;
+}
+
+message UpdateLogRes { bool success = 1; }
+
+message DataNodeUpdateAddrReq {
+  string message = 1;
+  repeated DataNodeConfig nodes = 2;
+}
+
+message DataNodeUpdateAddrRes { bool success = 1; }
